@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from socketEvent import *
+from .socketEvent import AcceptEvent, SendEvent, ReceiveEvent
 from utils.future import Future
 
 

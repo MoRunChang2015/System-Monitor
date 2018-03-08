@@ -1,12 +1,12 @@
 # -*- coding: UTF-8 -*-
 
 import json
-import time
 
 
-class PackageFactory(object):
+class PackageFactory:
 
     def __init__(self):
+        super().__init__()
         self.buffer = ""
 
     @staticmethod
@@ -52,71 +52,7 @@ class PackageFactory(object):
                 yield package
                 continue
             else:
-                package = Package()
-                package.load(res)
-                yield package
+                yield res
                 is_end = False
                 self.buffer = self.buffer[index:]
 
-
-class Package(object):
-
-    def __init__(self, package_type=None, time_stamp=None, src=None, dest=None, data=None):
-        super(Package, self).__init__()
-        self.__data = {}
-        self.package_type = package_type
-        self.time = time_stamp if time_stamp is not None else float(time.time())
-        self.src = src
-        self.dest = dest
-        self.data = data
-
-    def pack(self):
-        return json.dumps(self.__data)
-
-    def load(self, value):
-        self.__data = value
-
-    @property
-    def package_type(self):
-        return self.__data['package_type'] if 'package_type' in self.__data else None
-
-    @package_type.setter
-    def package_type(self, value):
-        if value is not None:
-            self.__data['package_type'] = str(value)
-
-    @property
-    def time(self):
-        return self.__data['time'] if 'time' in self.__data else None
-
-    @time.setter
-    def time(self, value):
-        if value is not None:
-            self.__data['time'] = float(value)
-
-    @property
-    def src(self):
-        return self.__data['src'] if 'src' in self.__data else None
-
-    @src.setter
-    def src(self, value):
-        if value is not None:
-            self.__data['src'] = str(value)
-
-    @property
-    def dest(self):
-        return self.__data['dest'] if 'dest' in self.__data else None
-
-    @dest.setter
-    def dest(self, value):
-        if value is not None:
-            self.__data['dest'] = str(value)
-
-    @property
-    def data(self):
-        return self.__data['data'] if 'data' in self.__data else None
-
-    @data.setter
-    def data(self, value):
-        if value is not None:
-            self.__data['data'] = str(value)

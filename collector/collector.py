@@ -52,7 +52,7 @@ def handle(connection):
                     continue
                 forward_server[server_id] = new_socket
             yield send(forward_server[server_id], data)
-            logger.info("Send data(len={0}) from {1} to {2}:{3}".format(len(data), socket.getpeername(), server["ip"], server["port"]))
+            logger.info("Send data(len={0}) from {1} to {2}:{3}".format(len(data), connection.getpeername(), server["ip"], server["port"]))
 
 @coroutine
 def start(t_config):

@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from event import input_event, output_event, input_map, output_map
+from .event import input_event, output_event, input_map, output_map
 import select
-import global_var
-import time
 
-tick = None
-shutdown = None
-
+timeout = 5;
 
 def run():
-    last_tick_time = float(time.time())
-    while not global_var.g_isStop:
+    while True:
         readable, writeable, exceptional = select.select(input_event, output_event, input_event + output_event,
-                                                         global_var.g_timeout)
-        if tick is not None and abs(float(time.time()) - last_tick_time) >= global_var.g_timeout:
-            tick()
-            last_tick_time = time.time()
+                                                         timeout)
         if not (readable or writeable or exceptional):
             continue
 
@@ -27,7 +19,7 @@ def run():
                     event.done()
                     if len(input_map[s]) == 0:
                         del input_map[s]
-                if s is not global_var.g_command_socket and s not in input_map:
+                if s not in input_map:
                     input_event.remove(s)
 
         for s in writeable:
@@ -47,7 +39,7 @@ def run():
                     event.error()
                     if len(input_map[s]) == 0:
                         del input_map[s]
-                if s is not global_var.g_command_socket and s not in input_map:
+                if s not in input_map:
                     input_event.remove(s)
             if s in output_event:
                 if s in output_map:
@@ -57,5 +49,3 @@ def run():
                         del output_map[s]
                 if s not in output_map:
                     output_event.remove(s)
-    if shutdown is not None:
-        shutdown()

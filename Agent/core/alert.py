@@ -3,7 +3,7 @@
 
 import logging
 import time
-from .globalVar import attributeManager
+from . import globalVar
 
 class AlertItem:
 
@@ -22,7 +22,7 @@ class AlertItem:
     def test(self):
         argsList = []
         for item in self.__args:
-            res = attributeManager.getAttrValueFromCache(item)
+            res = globalVar.attributeManager.getAttrValueFromCache(item)
             if res is None:
                 return None
             argsList.append(res)
@@ -37,9 +37,11 @@ class AlertManager:
         self.__alertItemList = []
 
     def appendAlertItem(self, alertItem):
+        self.logger.info("Register Alert {0}".format(alertItem.getName()))
         self.__alertItemList.append(alertItem)
 
     def remvoeAlertItem(self, alertItem):
+        self.logger.info("Remove Alert {0}".format(alertItem.getName()))
         self.__alertItemList.remove(alertItem)
 
     def update(self):
@@ -49,6 +51,7 @@ class AlertManager:
             res = item.test()
             if res is not None:
                 count += 1
+                self.logger.error("{0}, msg:{1}".format(item.getName(), res))
                 ret[item.getName()] = res
         if count != 0:
             ret["timestamp"] = time.time()

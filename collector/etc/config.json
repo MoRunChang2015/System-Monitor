@@ -1,7 +1,7 @@
 {
     "timeout": 5,
     "ip": "127.0.0.1",
-	"port": 8080, 
+	"port": 12340, 
     "forward_server":[
         {
             "ip": "127.0.0.1",

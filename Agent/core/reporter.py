@@ -45,7 +45,7 @@ class Reporter:
         isConnect = False
         for ip, port in self.__urls:
             try:
-                s.connect(ip, port)
+                s.connect((ip, port))
             except:
                 continue
             isConnect = True
@@ -57,20 +57,30 @@ class Reporter:
             return None
 
     def report(self):
-        socket = self.connectToCollector()
+        self.logger.info("#Reporter: Reporter Start...")
+        s = self.connectToCollector()
+        if s is None:
+            self.logger.warn("#Reporter: Can't not connect to collector")
+        else:
+            self.logger.info("#Reporter: Connect to {0}".format(s.getpeername()))
         while True:
             time.sleep(1)
             message = self.popAllMessage()
             if message == "":
                 continue
+            message = message.encode("utf-8")
             tryTime = 0
             while tryTime <= len(self.__urls):
                 try:
-                    socket.sendall(message)
-                except:
-                    socket = self.connectToCollector()
-                    if socket is None:
+                    s.sendall(message)
+                except Exception as e:
+                    print(e)
+                    s = self.connectToCollector()
+                    if s is None:
+                        self.logger.warn("#Reporter: Can't not connect to collector")
                         break
+                    self.logger.info("#Reporter: Connect to {0}".format(s.getpeername()))
                     tryTime += 1
                     continue
+                self.logger.info("#Reporter: Send data(len={0}) to {1}".format(len(message), s.getpeername()))
                 break

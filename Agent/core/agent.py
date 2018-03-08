@@ -27,6 +27,7 @@ def start(config):
     globalVar.attributeManager = AttributeManager()
     globalVar.alertManager = AlertManager()
     globalVar.reporter = Reporter(config["hostname"], config["urls"])
+    import script
     while True:
         time.sleep(1)
         tick()
@@ -34,12 +35,14 @@ def start(config):
 def tick():
     count, ret = globalVar.attributeManager.update()
     if count != 0:
-        ret["hostname"] = globalVar["hostname"]
+        ret["hostname"] = globalVar.hostname
         globalVar.reporter.appendMessage(json.dumps(ret))
 
     count, ret = globalVar.alertManager.update()
     if count != 0:
         for itemName in ret:
+            if itemName == "timestamp":
+                continue
             msg = {"Alert": itemName, "msg": ret[itemName],
                    "hostname": globalVar.hostname,
                    "timestamp": ret["timestamp"]}

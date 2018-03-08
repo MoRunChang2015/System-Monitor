@@ -15,6 +15,6 @@ def collectApi(name, description, interval=5):
 def alertApi(name, *args):
     def wraps(func):
         item = AlertItem(name, args, func)
-        alertManager.append(item)
+        alertManager.appendAlertItem(item)
         return func
     return wraps

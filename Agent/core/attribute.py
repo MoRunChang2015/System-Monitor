@@ -48,10 +48,12 @@ class AttributeManager:
         self.__attrValueCache = {}
 
     def appendAttribute(self, attribute):
+        self.logger.info("Register attribute {0}".format(attribute.getName()))
         self.__attrList.append(attribute)
 
 
     def removeAttribute(self, attribute):
+        self.logger.info("Remove attribute {0}".format(attribute.getName()))
         self.__attrList.remove(attribute)
 
     def update(self):
@@ -61,6 +63,7 @@ class AttributeManager:
         for attr in self.__attrList:
             res = attr.update(int(timeStamp))
             if res is not None:
+                self.logger.info("Collect {0} Value is {1}".format(attr.getName(), res))
                 ret[attr.getName()] = res
                 self.__attrValueCache[attr.getName()] = res
                 count += 1

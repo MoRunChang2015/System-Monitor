@@ -29,22 +29,23 @@ def initLogger():
     logger.addHandler(handler)
 
 @coroutine
-def handle(socket):
+def handle(connection):
     while True:
-        data = yield recv(socket)
+        data = yield recv(connection)
         if not data:
             break
         global logger
-        logger.info("Receive data(len = {0} from {1}".format(len(data), socket.getpeername()))
+        logger.info("Receive data(len = {0} from {1}".format(len(data), connection.getpeername()))
+        print(data)
         global config
         for server in config["forward_server"]:
-            server_id = tuple(server["ip"], server["port"])
+            server_id = server["ip"], server["port"]
             global forward_server
             if server_id not in forward_server:
                 new_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                new_socket.settimeout(5)
+                new_socket.settimeout(3)
                 try:
-                    new_socket.connect(server["ip"], server["port"])
+                    new_socket.connect((server["ip"], server["port"]))
                     logger.info("Connect to {0}:{1}".format(server["ip"], server["port"]))
                 except:
                     logger.info("Can't connect to {0}:{1}".format(server["ip"], server["port"]))
@@ -62,7 +63,7 @@ def start(t_config):
     logger.info("Initialize collector...")
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setblocking(False)
-    server.bind(config["ip"], config["port"])
+    server.bind((config["ip"], config["port"]))
     logger.info("listening {0}:{1}".format(config["ip"], config["port"]))
     server.listen(10)
 

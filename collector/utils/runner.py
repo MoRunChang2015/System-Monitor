@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from event import input_event, output_event, input_map, output_map
+from .event import input_event, output_event, input_map, output_map
 import select
 
 timeout = 5;

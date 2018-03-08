@@ -5,6 +5,7 @@ import logging
 import json
 import socket
 import time
+import copy
 from utils import runner
 from utils.co import coroutine
 from socketFunc.func import accept, recv
@@ -41,9 +42,10 @@ def switchToDb(db_name):
             return
     client.create_database(db_name)
 
-def writePoint(point):
-    global client
-    client.write_points(point)
+def writePoints(points):
+    global client, logger
+    logger.info("Write {0} points into database...".format(len(points)))
+    client.write_points(points)
 
 @coroutine
 def handle(connection):
@@ -55,6 +57,7 @@ def handle(connection):
             break
         global logger
         logger.info("Receive data(len = {0} from {1}".format(len(data), connection.getpeername()))
+        data = data.decode('utf-8')
         package = PackageFactory.push(factory, data)
         while package is not None:
             if 'Alert' in package:
@@ -73,22 +76,28 @@ def handle(connection):
                         'value': None
                     }
                 }
+                points = []
                 for item in package:
                     if item == "timestamp" or item == "hostname":
                         continue
                     if item == 'BEAT':
                         # TODO
                         continue
-                    point['measurement'] = item
-                    point['fields']['value'] = package[item]
-                    writePoint(point)
+                    new_point = copy.deepcopy(point)
+                    new_point['measurement'] = item
+                    new_point['fields']['value'] = package[item]
+                    points.append(new_point)
+                writePoints(points)
             package = PackageFactory.pop(factory)
 
 
 def initDBClinet():
-    global config, client
+    global config, client, logger
     client = InfluxDBClient(config['db']['host'], config['db']['port'],
                             config['db']['user'], config['db']['password'], 'example')
+    logger.info("Connect to {0}:{1} with User: {2}".format(config['db']['host'],
+                                                         config['db']['port'],
+                                                         config['db']['user']))
 
 @coroutine
 def start(t_config):

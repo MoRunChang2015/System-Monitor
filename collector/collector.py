@@ -36,7 +36,6 @@ def handle(connection):
             break
         global logger
         logger.info("Receive data(len = {0} from {1}".format(len(data), connection.getpeername()))
-        print(data)
         global config
         for server in config["forward_server"]:
             server_id = server["ip"], server["port"]

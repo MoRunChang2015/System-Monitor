@@ -67,7 +67,6 @@ def handle(connection):
                                                                                        package['Alert']))
             else:
                 db_name = package['hostname']
-                switchToDb(db_name)
                 point = {
                     'measurement': "",
                     'tags': {"host": db_name},
@@ -95,6 +94,7 @@ def initDBClinet():
     global config, client, logger
     client = InfluxDBClient(config['db']['host'], config['db']['port'],
                             config['db']['user'], config['db']['password'], 'example')
+    client.create_database("example")
     logger.info("Connect to {0}:{1} with User: {2}".format(config['db']['host'],
                                                          config['db']['port'],
                                                          config['db']['user']))

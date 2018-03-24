@@ -1,0 +1,14 @@
+FROM ubuntu:16.04
+
+WORKDIR /agent
+
+RUN apt update && false; while [ $? -ne 0 ]; do \
+    apt install \
+    python3-dev \
+    python3-pip \
+    -y --no-install-recommends; done
+
+add ./agent.tar.gz /agent/
+RUN chmod +x launcher.py
+
+CMD ["./launcher.py"]

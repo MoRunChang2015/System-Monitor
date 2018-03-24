@@ -3,14 +3,22 @@
 from core.api import collectApi
 
 @collectApi("LOAD5", "Cpu Avg Load 5", 5)
-def cpu_info():
-    loadavg = {}
+def cpu_load_5():
     f = open("/proc/loadavg")
     con = f.read().split()
     f.close()
-    loadavg['lavg_1']=con[0]
-    loadavg['lavg_5']=con[1]
-    loadavg['lavg_15']=con[2]
-    loadavg['nr']=con[3]
-    loadavg['last_pid']=con[4]
-    return loadavg['lavg_5']
+    return float(con[1])
+
+@collectApi("LOAD1", "Cpu Avg Load 1", 1)
+def cpu_load_1():
+    f = open("/proc/loadavg")
+    con = f.read().split()
+    f.close()
+    return float(con[0])
+
+@collectApi("LOAD15", "Cpu Avg Load 15", 15)
+def cpu_load_15():
+    f = open("/proc/loadavg")
+    con = f.read().split()
+    f.close()
+    return float(con[2])

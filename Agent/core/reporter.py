@@ -74,7 +74,6 @@ class Reporter:
                 try:
                     s.sendall(message)
                 except Exception as e:
-                    print(e)
                     s = self.connectToCollector()
                     if s is None:
                         self.logger.warn("#Reporter: Can't not connect to collector")

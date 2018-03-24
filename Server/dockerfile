@@ -1,0 +1,15 @@
+FROM ubuntu:16.04
+
+WORKDIR /server
+
+RUN apt update && false; while [ $? -ne 0 ]; do \
+    apt install \
+    python3-dev \
+    python3-pip \
+    -y --no-install-recommends; done
+
+RUN pip3 install influxdb
+add ./server.tar.gz /server/
+RUN chmod +x server.py
+
+CMD ["./server.py"]
